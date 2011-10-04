@@ -9,6 +9,9 @@ class Tumblr_Core {
 	function read($args = array()) {
 		$json = $this->_api('read', $args);
 		$posts = array();
+		
+		if(!is_object($posts)) return FALSE;
+		
 		foreach ($json->posts as $post) {
 			$posts[] = new Tumblr_Post($post);
 		}
@@ -35,22 +38,28 @@ class Tumblr_Core {
 		
 		switch($action) {
 			case 'post':
-				$this->read(array(
+				$result = $this->read(array(
 					'id' => $get['post_id'],
 					'action' => $action
 				));
+				
+				if($result === FALSE) return Kohana::config('tumblr.error_message');
 				
 				return View::factory('tumblr/posts', array(
 					'tumblr' => $this,
 					'action' => $action
 				));
 			case 'search':
-				$this->read(array(
+				$result = $this->read(array(
 					'search' => $get['q'],
 					'action' => $action));
+				
+				if($result === FALSE) return Kohana::config('tumblr.error_message');
+				
 				return View::factory('tumblr/search', array('tumblr' => $this));
 			default:
-				$this->read();
+				$result = $this->read();
+				if($result === FALSE) return Kohana::config('tumblr.error_message');
 				return View::factory('tumblr/posts', array('tumblr' => $this, 'action' => $action));
 		}
 	}
@@ -136,21 +145,27 @@ class Tumblr_Post {
 }
 
 class Tumblr_HTTP {
-	static $cache_time = 300; // 5 minutes
 	static $_cache_pending = array();
 	
 	static function get($url) {
 		if (function_exists('curl_init')) {
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-			$json = curl_exec($ch);
-			curl_close($ch);
-		}
-		else {
+			$l = 5;
+			
+			do {
+				if($l != 5) sleep(1);
+				
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, $url);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+				$json = curl_exec($ch);
+				$errorNumber = curl_errno($ch);
+				curl_close($ch);
+			} while($l-- > 0 && $errorNumber !== CURLE_OK);
+		} else {
 			$json = file_get_contents($url);
 		}
+		
 		if (preg_match('/^.+?(\{.+\});$/m', $json, $matches)) {
 			$json = $matches[1];
 		}
