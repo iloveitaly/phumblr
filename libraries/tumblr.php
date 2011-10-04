@@ -1,12 +1,12 @@
 <?php
 
 class Tumblr_Core {	 
-	function __construct($username) {
-		$this->username = $username;
+	function __construct() {
+		$this->username = Kohana::config('tumblr.username');
 		$this->cache = Cache::instance();
 	}
 	
-	function read($args=array()) {
+	function read($args = array()) {
 		$json = $this->_api('read', $args);
 		$posts = array();
 		foreach ($json->posts as $post) {
@@ -31,19 +31,27 @@ class Tumblr_Core {
 	}
 	
 	public function process($action) {
-		$tumblr = new Tumblr(Kohana::config('tumblr.username'));
+		$get = Input::instance()->get();
 		
 		switch($action) {
 			case 'post':
-				$tumblr->read(array('id'=>$_GET['post_id']));
-				include 'php/_posts.php';
-		   		break;
+				$this->read(array(
+					'id' => $get['post_id'],
+					'action' => $action
+				));
+				
+				return View::factory('tumblr/posts', array(
+					'tumblr' => $this,
+					'action' => $action
+				));
 			case 'search':
-				$tumblr->read(array('search'=>$_GET['q']));
-				include 'php/_search.php';			
+				$this->read(array(
+					'search' => $get['q'],
+					'action' => $action));
+				return View::factory('tumblr/search', array('tumblr' => $this));
 			default:
-				$tumblr->read();
-				include 'php/_posts.php';
+				$this->read();
+				return View::factory('tumblr/posts', array('tumblr' => $this, 'action' => $action));
 		}
 	}
 }
@@ -123,7 +131,6 @@ class Tumblr_Post {
 	}
 	
 	function permalink() {
-		global Kohana::config('tumblr.url_prefix');
 		return Kohana::config('tumblr.url_prefix').'/post/'.$this->id.'/'.$this->slug;
 	}
 }
@@ -148,14 +155,16 @@ class Tumblr_HTTP {
 			$json = $matches[1];
 		}
 		
-		$this->cache->set('tumblr.'.md5($url), $json, NULL, self::$cache_time);
+		$cache = Cache::instance();
+		$cache->set('tumblr.'.md5($url), $json, NULL, Kohana::config('tumblr.cache_time'));
 		return $json;
 	}
 	
 	static function get_cached($url) {
-		$cacheData = $this->cache->get('tumblr.'.md5($url));
+		$cache = Cache::instance();
+		$cacheData = $cache->get('tumblr.'.md5($url));
 		if(!empty($cacheData)) $json = json_decode($cacheData);
-		else $json = json_decode(self::get($url, $fn));
+		else $json = json_decode(self::get($url));
 
 		return $json;
 	}

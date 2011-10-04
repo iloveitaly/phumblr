@@ -1,3 +1,11 @@
 <div class="posts">
-<?php foreach ($tumblr->posts as $post) include '_post.php'; ?>
+<?
+foreach ($tumblr->posts as $post) {
+	echo View::factory('tumblr/post', array(
+		'post' => $post,
+		'action' => $action,
+		'tumblr' => $tumblr
+	));
+}
+?>
 </div>
