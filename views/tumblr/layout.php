@@ -5,27 +5,27 @@
    <title><?php if (!empty($title)): echo "$title - "; endif; ?>noonat+games</title>
    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
    <link rel="shortcut icon" href="http://7.media.tumblr.com/avatar_d74a28b04fef_16.png"/>
-   <link rel="alternate" type="application/rss+xml" href="<?php echo $url_prefix; ?>/rss"/>
-   <link rel="stylesheet" href="<?php echo $url_prefix; ?>/css/blueprint/screen.css" type="text/css" media="screen, projection"/>
-   <link rel="stylesheet" href="<?php echo $url_prefix; ?>/css/blueprint/print.css" type="text/css" media="print"/>
-   <!--[if lt IE 8]><link rel="stylesheet" href="<?php echo $url_prefix; ?>/css/blueprint/ie.css" type="text/css" media="screen, projection"/><![endif]-->
-   <!--<link rel="stylesheet" href="<?php echo $url_prefix; ?>/css/blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection"/>-->
-   <link rel="stylesheet" type="text/css" href="<?php echo $url_prefix; ?>/css/styles.css"/>
+   <link rel="alternate" type="application/rss+xml" href="<?php echo Kohana::config('tumblr.url_prefix'); ?>/rss"/>
+   <link rel="stylesheet" href="<?php echo Kohana::config('tumblr.url_prefix'); ?>/css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+   <link rel="stylesheet" href="<?php echo Kohana::config('tumblr.url_prefix'); ?>/css/blueprint/print.css" type="text/css" media="print"/>
+   <!--[if lt IE 8]><link rel="stylesheet" href="<?php echo Kohana::config('tumblr.url_prefix'); ?>/css/blueprint/ie.css" type="text/css" media="screen, projection"/><![endif]-->
+   <!--<link rel="stylesheet" href="<?php echo Kohana::config('tumblr.url_prefix'); ?>/css/blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection"/>-->
+   <link rel="stylesheet" type="text/css" href="<?php echo Kohana::config('tumblr.url_prefix'); ?>/css/styles.css"/>
 </head>
 
 <body class="action_<?php echo $action; ?>">
 <div class="container">
    <div id="nav" class="span-20">
       <ul>
-         <li><a href="<?php echo $url_prefix; ?>/archive">Archives</a></li>
-         <li><a href="<?php echo $url_prefix; ?>/rss">RSS</a></li>
+         <li><a href="<?php echo Kohana::config('tumblr.url_prefix'); ?>/archive">Archives</a></li>
+         <li><a href="<?php echo Kohana::config('tumblr.url_prefix'); ?>/rss">RSS</a></li>
       </ul>
    </div>
    <div id="body" class="span-13"><?php echo $body; ?></div>
    <div id="mast" class="span-7 last">
-      <h1><a href="<?php echo $url_prefix; ?>"><?php echo $tumblr->title; ?></a></h1>
+      <h1><a href="<?php echo Kohana::config('tumblr.url_prefix'); ?>"><?php echo $tumblr->title; ?></a></h1>
       <div class="search">
-         <form action="<?php echo $url_prefix ?>/search" method="get">
+         <form action="<?php echo Kohana::config('tumblr.url_prefix') ?>/search" method="get">
             <input type="text" name="q" value="<?php echo !empty($_GET['q']) ? $_GET['q'] : ''; ?>"/>
             <input type="submit" value="Search"/>
          </form>

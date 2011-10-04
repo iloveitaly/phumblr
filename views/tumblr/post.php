@@ -1,6 +1,6 @@
 <div class="post">
    <div class="<?php echo htmlentities($post->type); ?>">
-      <div class="permalink"><a href="<?php echo $url_prefix; ?>/post/<?php echo $post->id; ?>/<?php echo $post->slug; ?>">+</a></div>
+      <div class="permalink"><a href="<?php echo Kohana::config('tumblr.url_prefix'); ?>/post/<?php echo $post->id; ?>/<?php echo $post->slug; ?>">+</a></div>
       <?php if ($post->type === Tumblr_Post::TYPE_REGULAR): ?>
          <h2 class="regular_title"><?php echo $post->regular_title; ?></h2>
          <div class="regular_body"><?php echo $post->regular_body; ?></div>
@@ -42,7 +42,7 @@
       <?php endif; ?>
    </div>
    <div class="meta">
-      <div class="comments"><a class="dsq-comment-count" href="<?php echo $url_prefix; ?>/post/<?php echo $post->id ?>/<?php echo $post->slug; ?>#disqus_thread">comments</a></div>
+      <div class="comments"><a class="dsq-comment-count" href="<?php echo Kohana::config('tumblr.url_prefix'); ?>/post/<?php echo $post->id ?>/<?php echo $post->slug; ?>#disqus_thread">comments</a></div>
       <div class="date">
          <span class="month"><?php echo date('M j', $post->unix_timestamp); ?></span>
          <span class="year"><?php echo date('Y', $post->unix_timestamp); ?></span>
