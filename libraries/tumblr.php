@@ -10,7 +10,7 @@ class Tumblr_Core {
 		$json = $this->_api('read', $args);
 		$posts = array();
 		
-		if(!is_object($posts)) return FALSE;
+		if(!is_object($json)) return FALSE;
 		
 		foreach ($json->posts as $post) {
 			$posts[] = new Tumblr_Post($post);
@@ -33,13 +33,13 @@ class Tumblr_Core {
 		return Tumblr_HTTP::get_cached($url);
 	}
 	
-	public function process($action) {
+	public function process($action, $argument) {
 		$get = Input::instance()->get();
 		
 		switch($action) {
 			case 'post':
 				$result = $this->read(array(
-					'id' => $get['post_id'],
+					'id' => $argument,
 					'action' => $action
 				));
 				
@@ -180,12 +180,11 @@ class Tumblr_HTTP {
 		$cacheData = $cache->get('tumblr.'.md5($url));
 		if(!empty($cacheData)) $json = json_decode($cacheData);
 		else $json = json_decode(self::get($url));
-
 		return $json;
 	}
 }
-
-function tumblr_http_shutdown() {
-	// Tumblr_HTTP::_cache_pending();
-}
-register_shutdown_function('tumblr_http_shutdown');
+// 
+// function tumblr_http_shutdown() {
+// 	// Tumblr_HTTP::_cache_pending();
+// }
+// register_shutdown_function('tumblr_http_shutdown');
